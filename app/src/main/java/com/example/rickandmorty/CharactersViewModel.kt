@@ -9,21 +9,22 @@ import com.example.rickandmorty.retrofitpkg.RetrofitServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.FieldPosition
 
-
+private val NUMBER_PAGE_INDEX = 1
 
 class charactersViewModel() : ViewModel() {
     var mService: RetrofitServices = Common.retrofitService
-    val characterData: MutableLiveData<List<Result>> = MutableLiveData()
-    val characterList: LiveData<List<Result>> get() = characterData
+    val characterData: MutableLiveData<List<CharacterItem>> = MutableLiveData()
+    val characterList: LiveData<List<CharacterItem>> get() = characterData
     lateinit var copyOfCharacters: List<Result>
 
     init {
-        getCharacters()
+        getCharacters(1)
     }
 
-    fun getCharacters(){
-        mService.getCharactersList(1).enqueue(object : Callback<CharacterData> {
+    fun getCharacters(page: Int) {
+        mService.getCharactersList(page).enqueue(object : Callback<CharacterData> {
 
             override fun onResponse(
                 call: Call<CharacterData>,
@@ -43,8 +44,38 @@ class charactersViewModel() : ViewModel() {
         })
     }
 
-    fun search(s: CharSequence)
-    {
+    private fun convertResponceToCharList(resp: Response<CharacterData>): List<CharacterItem> {
+        val oldData = characterList.value ?: listOf()
+        val tempStorage = mutableListOf<CharacterItem>()
+        resp.body()?.let { responceBody ->
+            responceBody.results.forEach { char ->
+                tempStorage.add(CharacterItem.CharacterInfo(char))
+            }
+            responceBody.info.next?.let { linkToNextPage ->
+                val nexPageNumber = linkToNextPage.split('=')[NUMBER_PAGE_INDEX].toInt()
+                tempStorage.add(CharacterItem.NextPage(nexPageNumber))
+            }
+        }
+        return oldData.plus(tempStorage)
+    }
+
+    fun handleClick(position: Int): Boolean {
+        return if (characterData.value?.get(position) is CharacterItem.NextPage) {
+            (characterData.value?.get(position) as CharacterItem.NextPage).nextpageid?.let {
+                getCharacters(it)
+            }
+            false
+        } else {
+            true
+        }
+    }
+
+    fun getCharacterByPosition(pos: Int): CharacterItem? {
+        return characterData.value?.get(pos)
+    }
+
+
+   /* fun search(s: CharSequence) {
         var results = mutableListOf<Result>()
         if (s.isNotBlank()) {
             copyOfCharacters.forEach { character ->
@@ -52,10 +83,9 @@ class charactersViewModel() : ViewModel() {
                     results.add(character)
 
             }
-        }
-        else
+        } else
             results.addAll(copyOfCharacters)
 
         characterData.value = results
-    }
+    }*/
 }

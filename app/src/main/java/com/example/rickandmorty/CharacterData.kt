@@ -44,7 +44,7 @@ data class Result(
 
 sealed class CharacterItem{
     data class CharacterInfo(
-        val character: CharacterData
+        val character: Result
     ) : CharacterItem()
 
     data class NextPage(

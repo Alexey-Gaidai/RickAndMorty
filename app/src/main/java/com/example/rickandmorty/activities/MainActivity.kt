@@ -18,8 +18,17 @@ import com.example.rickandmorty.charactersViewModel
 class MainActivity : AppCompatActivity() {
 
     lateinit var layoutManager: GridLayoutManager
-    private val adapter by lazy { Adapter(this) }
     private val model: charactersViewModel by viewModels()
+    private val adapter = Adapter { position ->
+        val positionOnCharacter = model.handleClick(position)
+        if (positionOnCharacter) {
+            startCharacterEpisodeActivity(position)
+        }
+    }
+
+    private fun startCharacterEpisodeActivity(pos: Int){
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         title = ""
 
         val recyclerView: RecyclerView = findViewById(R.id.rView)
-        layoutManager = GridLayoutManager(this,2)
+        layoutManager = GridLayoutManager(this, 2)
 
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
@@ -43,26 +52,30 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
             }
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
                 model.search(s)
             }
         })
     }
 
-    fun onCellClickListener(data: ArrayList<String>, ep: ArrayList<String>){
+    fun onCellClickListener(data: ArrayList<String>, ep: ArrayList<String>) {
         intent = Intent(this, CharacterActivity::class.java)
         intent.putExtra("CharacterData", data)
         intent.putExtra("CharacterEpis", ep)
         startActivity(intent)
     }
 
-    fun observe(){
-        model.characterList.observe(this, Observer{
+    fun observe() {
+        model.characterList.observe(this, Observer {
             adapter.submitList(it)
         })
     }
