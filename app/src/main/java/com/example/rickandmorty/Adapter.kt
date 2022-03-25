@@ -45,7 +45,6 @@ class Adapter(private val cellClickListener: (Int) -> Unit) :
         return if (getItem(position) is CharacterItem.NextPage) R.layout.load_more_button
         else R.layout.r_view
     }
-
 }
 
 class LoadButtonViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -63,10 +62,6 @@ class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 }
 
 class CharacterItemDiffCallback : DiffUtil.ItemCallback<CharacterItem>() {
-    override fun areItemsTheSame(oldItem: CharacterItem, newItem: CharacterItem) =
-        oldItem == newItem
-
-    override fun areContentsTheSame(oldItem: CharacterItem, newItem: CharacterItem) =
-        oldItem == newItem
-
+    override fun areItemsTheSame(oldItem: CharacterItem, newItem: CharacterItem) = oldItem == newItem
+    override fun areContentsTheSame(oldItem: CharacterItem, newItem: CharacterItem) = oldItem == newItem
 }

@@ -23,7 +23,7 @@ class CharacterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_character)
 
         val description = intent.getStringArrayListExtra("CharacterData")
-        val episodes = intent.getStringArrayListExtra("CharacterEpis")
+        val episodes = intent.getStringArrayListExtra("CharacterEpisodes")
 
         if (model.episodeList.value == null) {
             model.getInfo(episodes as ArrayList<String>)
@@ -63,8 +63,6 @@ class CharacterActivity : AppCompatActivity() {
         model.episodeList.observe(this) {
             adapter.submitList(it)
         }
-
-
     }
 
 

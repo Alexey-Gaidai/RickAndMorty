@@ -15,10 +15,9 @@ class EpisodeViewModel : ViewModel() {
 
     fun getInfo(episodes: ArrayList<String>) {
         val numbersOfEpisode: ArrayList<Int> = arrayListOf()
-        for (i in episodes.indices) {
-            numbersOfEpisode.add(episodes[i].substring(40).toInt())
+        for (index in episodes.indices) {
+            numbersOfEpisode.add(episodes[index].substring(40).toInt())
         }
-
         mService.getEpisodeList(numbersOfEpisode).enqueue(object : Callback<EpisodeData> {
             override fun onResponse(
                 call: Call<EpisodeData>,

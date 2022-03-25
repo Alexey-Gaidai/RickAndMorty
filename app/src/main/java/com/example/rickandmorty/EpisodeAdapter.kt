@@ -22,9 +22,7 @@ class EpisodeAdapter : ListAdapter<EpItem, EpisodeViewHolder>(EpisodeItemDiffCal
 
 class EpisodeItemDiffCallback : DiffUtil.ItemCallback<EpItem>(){
     override fun areItemsTheSame(oldItem: EpItem, newItem: EpItem) = oldItem == newItem
-
     override fun areContentsTheSame(oldItem: EpItem, newItem: EpItem) = oldItem == newItem
-
 }
 
 class EpisodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,6 +32,5 @@ class EpisodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bindTo(ep: EpItem){
         name.text = ep.episode
         date.text = ep.air_date
-
     }
 }

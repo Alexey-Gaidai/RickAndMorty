@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         description.add(chosenChar.character.species)
         description.add(chosenChar.character.origin.name)
         intent.putExtra("CharacterData", description)
-        intent.putExtra("CharacterEpis", chosenChar.character.episode as ArrayList<String>)
+        intent.putExtra("CharacterEpisodes", chosenChar.character.episode as ArrayList<String>)
         startActivity(intent)
     }
 

@@ -1,9 +1,5 @@
 package com.example.rickandmorty
 
-import android.provider.ContactsContract
-import android.text.Layout
-import androidx.recyclerview.widget.RecyclerView
-
 data class CharacterData(
     val info: Info,
     val results: List<Result>

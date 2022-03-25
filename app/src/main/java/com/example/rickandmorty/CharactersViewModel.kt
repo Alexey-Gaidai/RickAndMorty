@@ -80,5 +80,5 @@ class CharactersViewModel : ViewModel() {
              results.addAll(savedList)
          }
          characterData.value = results
-     }
+    }
 }
