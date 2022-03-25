@@ -14,23 +14,37 @@ import com.example.rickandmorty.activities.MainActivity
 import java.io.InputStream
 import java.net.URL
 
-class Adapter(private val cellClickListener: (AdapterView<*>) -> Unit) : ListAdapter<Result, ViewHolder>(CharacterItemDiffCallback()){
+class Adapter(private val cellClickListener: (Int) -> Unit) :
+    ListAdapter<CharacterItem, RecyclerView.ViewHolder>(CharacterItemDiffCallback()) {
 
     private val adapterData = mutableListOf<CharacterItem>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layout = when (viewType) {
-            TYPE_CHARACTER -> R.layout.r_view
-            TYPE_BUTTON -> R.layout.load_more_button
-            else -> throw IllegalArgumentException("Invalid type")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val viewTemplate = layoutInflater.inflate(viewType, parent, false)
+        return when (viewType) {
+            R.layout.r_view -> {
+                val charViewHolder = CharacterViewHolder(viewTemplate)
+                charViewHolder.itemView.setOnClickListener { cellClickListener(charViewHolder.adapterPosition) }
+                charViewHolder
+            }
+            R.layout.load_more_button -> {
+                val loadViewHolder = LoadButtonViewHolder(viewTemplate)
+                loadViewHolder.itemView.setOnClickListener { cellClickListener(loadViewHolder.adapterPosition) }
+                loadViewHolder
+            }
+            else -> {
+                throw Throwable("Err")
+            }
         }
-
-        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-
-        return ViewHolder(view)
     }
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val data = currentList[position]
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        if (holder is CharacterViewHolder) {
+            holder.bindCharacter(getItem(position) as CharacterItem.CharacterInfo)
+        }
+        /*val data = currentList[position]
 
         holder.bindCharacter(data)
 
@@ -50,16 +64,14 @@ class Adapter(private val cellClickListener: (AdapterView<*>) -> Unit) : ListAda
 
         holder.itemView.setOnClickListener {
             cellClickListener.onCellClickListener(description, episodes)
-        }
+        }*/
     }
 
     override fun getItemCount(): Int = adapterData.size
 
     override fun getItemViewType(position: Int): Int {
-        return when (adapterData[position]){
-            is DataModel.Char -> TYPE_CHARACTER
-            is DataModel.NextPage -> TYPE_BUTTON
-        }
+        return if (getItem(position) is CharacterItem.NextPage) R.layout.load_more_button
+        else R.layout.r_view
     }
 
     fun setData(data: List<CharacterItem>) {
@@ -76,34 +88,26 @@ class Adapter(private val cellClickListener: (AdapterView<*>) -> Unit) : ListAda
     }
 }
 
+class LoadButtonViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val avatar: ImageView = view.findViewById(R.id.characterImage)
     val name: TextView = view.findViewById(R.id.nameAC)
 
-    fun bindCharacter(item: CharacterItem.CharacterInfo){
-        val i: InputStream = URL(item.character.results.).openStream()
+    fun bindCharacter(item: CharacterItem.CharacterInfo) {
+        val i: InputStream = URL(item.character.image).openStream()
         val png = BitmapFactory.decodeStream(i)
         avatar.setImageBitmap(png)
         name.text = item.character.name
     }
-
-    fun bindButton(item: DataModel.NextPage){
-        val nextpagelink = item.next
-    }
-
-    fun bind(dataModel: DataModel){
-        when (dataModel) {
-            is DataModel.Char -> bindCharacter(dataModel)
-            is DataModel.NextPage -> bindButton(dataModel)
-        }
-    }
 }
 
 
-class CharacterItemDiffCallback : DiffUtil.ItemCallback<Result>(){
-    override fun areItemsTheSame(oldItem: Result, newItem: Result) = oldItem == newItem
+class CharacterItemDiffCallback : DiffUtil.ItemCallback<CharacterItem>() {
+    override fun areItemsTheSame(oldItem: CharacterItem, newItem: CharacterItem) =
+        oldItem == newItem
 
-    override fun areContentsTheSame(oldItem: Result, newItem: Result) = oldItem == newItem
+    override fun areContentsTheSame(oldItem: CharacterItem, newItem: CharacterItem) =
+        oldItem == newItem
 
 }

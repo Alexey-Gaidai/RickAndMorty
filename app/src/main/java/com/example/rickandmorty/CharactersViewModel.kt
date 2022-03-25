@@ -24,16 +24,19 @@ class charactersViewModel() : ViewModel() {
     }
 
     fun getCharacters(page: Int) {
+        characterData.value = characterData.value.let { it?.slice(0 until (it.size-1)) }
         mService.getCharactersList(page).enqueue(object : Callback<CharacterData> {
 
             override fun onResponse(
                 call: Call<CharacterData>,
                 response: Response<CharacterData>
             ) {
-                val abc = response.body() as CharacterData
-                Log.d("tag", abc.results.toString())
+                characterData.value = convertResponceToCharList(response)
+
+                /*val abc = response.body() as CharacterData
+
                 characterData.value = abc.results
-                copyOfCharacters = abc.results
+                copyOfCharacters = abc.results*/
 
             }
 
@@ -56,6 +59,7 @@ class charactersViewModel() : ViewModel() {
                 tempStorage.add(CharacterItem.NextPage(nexPageNumber))
             }
         }
+        Log.d("tag", oldData.toString())
         return oldData.plus(tempStorage)
     }
 

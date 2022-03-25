@@ -12,7 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.Adapter
+import com.example.rickandmorty.CharacterItem
 import com.example.rickandmorty.R
+import com.example.rickandmorty.Result
 import com.example.rickandmorty.charactersViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +29,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCharacterEpisodeActivity(pos: Int){
-
+        intent = Intent(this, CharacterActivity::class.java)
+        val chosenChar = model.getCharacterByPosition(pos) as CharacterItem.CharacterInfo
+        intent.putExtra("CharacterData", chosenChar.character as ArrayList<Result>)
+        intent.putExtra("CharacterEpis", chosenChar.character.episode as String)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +68,6 @@ class MainActivity : AppCompatActivity() {
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                model.search(s)
             }
         })
     }
