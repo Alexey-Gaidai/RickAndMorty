@@ -8,19 +8,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.Adapter
 import com.example.rickandmorty.CharacterItem
 import com.example.rickandmorty.R
-import com.example.rickandmorty.Result
-import com.example.rickandmorty.charactersViewModel
+import com.example.rickandmorty.CharactersViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var layoutManager: GridLayoutManager
-    private val model: charactersViewModel by viewModels()
+    private lateinit var layoutManager: GridLayoutManager
+    private val model: CharactersViewModel by viewModels()
     private val adapter = Adapter { position ->
         val positionOnCharacter = model.handleClick(position)
         if (positionOnCharacter) {
@@ -31,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private fun startCharacterEpisodeActivity(pos: Int){
         intent = Intent(this, CharacterActivity::class.java)
         val chosenChar = model.getCharacterByPosition(pos) as CharacterItem.CharacterInfo
-        var description: ArrayList<String> = arrayListOf()
+        val description: ArrayList<String> = arrayListOf()
         description.add(chosenChar.character.image)
         description.add(chosenChar.character.name)
         description.add(chosenChar.character.status)
@@ -51,18 +49,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         title = ""
-
         val recyclerView: RecyclerView = findViewById(R.id.rView)
         layoutManager = GridLayoutManager(this, 2)
-
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
 
         observe()
-        adapter.submitList(model.characterList.value)
 
-        val searchET: EditText = findViewById(R.id.search_edit_text)
-        searchET.addTextChangedListener(object : TextWatcher {
+        val searchEditText: EditText = findViewById(R.id.search_edit_text)
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
 
             }
@@ -82,16 +77,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun onCellClickListener(data: ArrayList<String>, ep: ArrayList<String>) {
-        intent = Intent(this, CharacterActivity::class.java)
-        intent.putExtra("CharacterData", data)
-        intent.putExtra("CharacterEpis", ep)
-        startActivity(intent)
-    }
-
-    fun observe() {
-        model.characterData.observe(this, Observer {
+    private fun observe() {
+        model.characterList.observe(this) {
             adapter.submitList(it)
-        })
+        }
     }
 }
