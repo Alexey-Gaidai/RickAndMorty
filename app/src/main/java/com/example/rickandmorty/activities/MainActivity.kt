@@ -31,8 +31,16 @@ class MainActivity : AppCompatActivity() {
     private fun startCharacterEpisodeActivity(pos: Int){
         intent = Intent(this, CharacterActivity::class.java)
         val chosenChar = model.getCharacterByPosition(pos) as CharacterItem.CharacterInfo
-        intent.putExtra("CharacterData", chosenChar.character as ArrayList<Result>)
-        intent.putExtra("CharacterEpis", chosenChar.character.episode as String)
+        var description: ArrayList<String> = arrayListOf()
+        description.add(chosenChar.character.image)
+        description.add(chosenChar.character.name)
+        description.add(chosenChar.character.status)
+        description.add(chosenChar.character.type)
+        description.add(chosenChar.character.gender)
+        description.add(chosenChar.character.species)
+        description.add(chosenChar.character.origin.name)
+        intent.putExtra("CharacterData", description)
+        intent.putExtra("CharacterEpis", chosenChar.character.episode as ArrayList<String>)
         startActivity(intent)
     }
 
@@ -51,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         observe()
+        adapter.submitList(model.characterList.value)
 
         val searchET: EditText = findViewById(R.id.search_edit_text)
         searchET.addTextChangedListener(object : TextWatcher {
@@ -68,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
+                model.search(s)
             }
         })
     }
@@ -80,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun observe() {
-        model.characterList.observe(this, Observer {
+        model.characterData.observe(this, Observer {
             adapter.submitList(it)
         })
     }

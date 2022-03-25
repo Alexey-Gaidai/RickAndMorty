@@ -17,8 +17,6 @@ import java.net.URL
 class Adapter(private val cellClickListener: (Int) -> Unit) :
     ListAdapter<CharacterItem, RecyclerView.ViewHolder>(CharacterItemDiffCallback()) {
 
-    private val adapterData = mutableListOf<CharacterItem>()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val viewTemplate = layoutInflater.inflate(viewType, parent, false)
@@ -67,25 +65,12 @@ class Adapter(private val cellClickListener: (Int) -> Unit) :
         }*/
     }
 
-    override fun getItemCount(): Int = adapterData.size
 
     override fun getItemViewType(position: Int): Int {
         return if (getItem(position) is CharacterItem.NextPage) R.layout.load_more_button
         else R.layout.r_view
     }
 
-    fun setData(data: List<CharacterItem>) {
-        adapterData.apply {
-            clear()
-            addAll(data)
-        }
-    }
-
-    companion object {
-        private const val TYPE_CHARACTER = 0
-        private const val TYPE_BUTTON = 1
-
-    }
 }
 
 class LoadButtonViewHolder(view: View) : RecyclerView.ViewHolder(view)

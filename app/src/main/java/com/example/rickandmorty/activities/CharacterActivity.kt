@@ -15,7 +15,7 @@ import com.example.rickandmorty.*
 import java.io.InputStream
 import java.net.URL
 
-class CharacterActivity: AppCompatActivity() {
+class CharacterActivity : AppCompatActivity() {
 
     lateinit var layoutManager: LinearLayoutManager
 
@@ -55,23 +55,22 @@ class CharacterActivity: AppCompatActivity() {
         val image = BitmapFactory.decodeStream(i)
         avatarImage.setImageBitmap(image)
 
-        if(description?.get(2) == "Alive")
+        if (description?.get(2) == "Alive")
             statusIcon.setImageResource(R.mipmap.ic_alive)
-        if(description?.get(2) == "Dead")
+        if (description?.get(2) == "Dead")
             statusIcon.setImageResource(R.mipmap.ic_death)
-        if(description?.get(2) == "unknown")
+        if (description?.get(2) == "unknown")
             statusIcon.setImageResource(R.mipmap.ic_unknown)
 
         name.text = description?.get(1)
-        statusSpecies.text = description?.get(2)+" - "+description?.get(5)
+        statusSpecies.text = description?.get(2) + " - " + description?.get(5)
         gender.text = description?.get(4)
         planet.text = description?.get(6)
 
-        runOnUiThread {
-            model.episodeList.observe(this, Observer {
-                adapter.submitList(it)
-            })
-        }
+        model.episodeList.observe(this, Observer {
+            adapter.submitList(it)
+        })
+
 
     }
 

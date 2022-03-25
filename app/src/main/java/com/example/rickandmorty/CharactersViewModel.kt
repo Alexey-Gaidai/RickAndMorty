@@ -4,27 +4,25 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.rickandmorty.retrofitpkg.Common
 import com.example.rickandmorty.retrofitpkg.RetrofitServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.FieldPosition
 
-private val NUMBER_PAGE_INDEX = 1
+private const val NUMBER_PAGE_INDEX = 1
 
 class charactersViewModel() : ViewModel() {
-    var mService: RetrofitServices = Common.retrofitService
+    val mService = App.apiService
     val characterData: MutableLiveData<List<CharacterItem>> = MutableLiveData()
     val characterList: LiveData<List<CharacterItem>> get() = characterData
-    lateinit var copyOfCharacters: List<Result>
+    lateinit var copyOfCharacters: List<CharacterItem.CharacterInfo>
 
     init {
         getCharacters(1)
     }
 
-    fun getCharacters(page: Int) {
-        characterData.value = characterData.value.let { it?.slice(0 until (it.size-1)) }
+    private fun getCharacters(page: Int) {
+        characterData.value = characterData.value.let { it?.slice(0 until (it.size - 1)) }
         mService.getCharactersList(page).enqueue(object : Callback<CharacterData> {
 
             override fun onResponse(
@@ -33,10 +31,7 @@ class charactersViewModel() : ViewModel() {
             ) {
                 characterData.value = convertResponceToCharList(response)
 
-                /*val abc = response.body() as CharacterData
-
-                characterData.value = abc.results
-                copyOfCharacters = abc.results*/
+                Log.d("responce", characterData.value!!.size.toString())
 
             }
 
@@ -48,7 +43,7 @@ class charactersViewModel() : ViewModel() {
     }
 
     private fun convertResponceToCharList(resp: Response<CharacterData>): List<CharacterItem> {
-        val oldData = characterList.value ?: listOf()
+        val oldData = characterData.value ?: listOf()
         val tempStorage = mutableListOf<CharacterItem>()
         resp.body()?.let { responceBody ->
             responceBody.results.forEach { char ->
@@ -59,8 +54,8 @@ class charactersViewModel() : ViewModel() {
                 tempStorage.add(CharacterItem.NextPage(nexPageNumber))
             }
         }
-        Log.d("tag", oldData.toString())
         return oldData.plus(tempStorage)
+        Log.d("tag", oldData.size.toString())
     }
 
     fun handleClick(position: Int): Boolean {
@@ -79,17 +74,17 @@ class charactersViewModel() : ViewModel() {
     }
 
 
-   /* fun search(s: CharSequence) {
-        var results = mutableListOf<Result>()
-        if (s.isNotBlank()) {
-            copyOfCharacters.forEach { character ->
-                if (character.name.toLowerCase().contains(s))
-                    results.add(character)
+    fun search(s: CharSequence) {
+         var results = mutableListOf<CharacterItem.CharacterInfo>()
+         if (s.isNotBlank()) {
+             copyOfCharacters.forEach { character ->
+                 if (character.character.name.toLowerCase().contains(s))
+                     results.add(character)
 
-            }
-        } else
-            results.addAll(copyOfCharacters)
+             }
+         } else
+             results.addAll(copyOfCharacters)
 
-        characterData.value = results
-    }*/
+         characterData.value = results
+     }
 }

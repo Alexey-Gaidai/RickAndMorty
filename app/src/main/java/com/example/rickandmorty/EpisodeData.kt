@@ -1,18 +1,8 @@
 package com.example.rickandmorty
 
-data class EpisodeData(
-    val info: EpisodeInfo,
-    val results: List<EpisodeResult>
-)
+class EpisodeData : ArrayList<EpItem>()
 
-data class EpisodeInfo(
-    val count: Int,
-    val pages: Int,
-    val next: String,
-    val prev: Any
-)
-
-data class EpisodeResult(
+data class EpItem(
     val id: Int,
     val name: String,
     val air_date: String,
