@@ -1,23 +1,25 @@
 package com.example.rickandmorty.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.Adapter
 import com.example.rickandmorty.CharacterItem
-import com.example.rickandmorty.R
 import com.example.rickandmorty.CharactersViewModel
+import com.example.rickandmorty.R
+
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var layoutManager: GridLayoutManager
+    private lateinit var layoutManager: LinearLayoutManager
     private val model: CharactersViewModel by viewModels()
     private val adapter = Adapter { position ->
         val positionOnCharacter = model.handleClick(position)
@@ -50,9 +52,15 @@ class MainActivity : AppCompatActivity() {
 
         title = ""
         val recyclerView: RecyclerView = findViewById(R.id.rView)
-        layoutManager = GridLayoutManager(this, 2)
+        layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(
+            recyclerView.context,
+            layoutManager.orientation
+        )
+        recyclerView.addItemDecoration(dividerItemDecoration)
 
         observe()
 

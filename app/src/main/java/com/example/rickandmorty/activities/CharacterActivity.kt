@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.*
@@ -35,6 +36,11 @@ class CharacterActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar2)
         setSupportActionBar(toolbar)
+        val dividerItemDecoration = DividerItemDecoration(
+            recyclerView.context,
+            layoutManager.orientation
+        )
+        recyclerView.addItemDecoration(dividerItemDecoration)
 
         title = description?.get(1)
 
