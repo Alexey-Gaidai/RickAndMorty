@@ -3,6 +3,9 @@ package com.example.rickandmorty
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,18 +26,21 @@ class CharactersViewModel : ViewModel() {
 
     private fun getCharacters(page: Int) {
         characterData.value = characterData.value.let { it?.slice(0 until (it.size - 1)) }
-        mService.getCharactersList(page).enqueue(object : Callback<CharacterData> {
-            override fun onResponse(
-                call: Call<CharacterData>,
-                response: Response<CharacterData>
-            ) {
-                characterData.value = convertResponceToCharList(response)
-                savedList = characterData.value!!
-            }
-            override fun onFailure(call: Call<CharacterData>, t: Throwable) {
-                characterData.value = emptyList()
-            }
-        })
+        GlobalScope.launch {
+            mService.getCharactersList(page).enqueue(object : Callback<CharacterData> {
+                override fun onResponse(
+                    call: Call<CharacterData>,
+                    response: Response<CharacterData>
+                ) {
+                    characterData.value = convertResponceToCharList(response)
+                    savedList = characterData.value!!
+                }
+
+                override fun onFailure(call: Call<CharacterData>, t: Throwable) {
+                    characterData.value = emptyList()
+                }
+            })
+        }
     }
 
     private fun convertResponceToCharList(resp: Response<CharacterData>): List<CharacterItem> {
