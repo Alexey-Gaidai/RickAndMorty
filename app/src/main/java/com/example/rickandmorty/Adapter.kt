@@ -1,5 +1,6 @@
 package com.example.rickandmorty
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 import java.net.URL
 
@@ -54,10 +59,13 @@ class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.nameAC)
 
     fun bindCharacter(item: CharacterItem.CharacterInfo) {
-        val i: InputStream = URL(item.character.image).openStream()
-        val png = BitmapFactory.decodeStream(i)
-        avatar.setImageBitmap(png)
-        name.text = item.character.name
+        runBlocking {
+            Glide
+                .with(itemView)
+                .load(item.character.image)
+                .into(avatar)
+            name.text = item.character.name
+        }
     }
 }
 

@@ -3,7 +3,6 @@ package com.example.rickandmorty
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -32,7 +31,7 @@ class CharactersViewModel : ViewModel() {
                     call: Call<CharacterData>,
                     response: Response<CharacterData>
                 ) {
-                    characterData.value = convertResponceToCharList(response)
+                    characterData.value = convertResponseToCharList(response)
                     savedList = characterData.value!!
                 }
 
@@ -43,7 +42,7 @@ class CharactersViewModel : ViewModel() {
         }
     }
 
-    private fun convertResponceToCharList(resp: Response<CharacterData>): List<CharacterItem> {
+    private fun convertResponseToCharList(resp: Response<CharacterData>): List<CharacterItem> {
         val oldData = characterData.value ?: listOf()
         val tempStorage = mutableListOf<CharacterItem>()
         resp.body()?.let { responceBody ->

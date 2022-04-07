@@ -9,6 +9,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+private const val BASE_URL = "https://rickandmortyapi.com/api/"
+
 interface RetrofitServices {
     @GET("character?")
     fun getCharactersList(@Query("page") pageId: Int): Call<CharacterData>
@@ -19,7 +21,7 @@ interface RetrofitServices {
     companion object {
         fun createApiService(): RetrofitServices {
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://rickandmortyapi.com/api/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             return retrofit.create(RetrofitServices::class.java)
